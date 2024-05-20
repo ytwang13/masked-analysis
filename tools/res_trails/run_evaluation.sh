@@ -12,6 +12,6 @@ python tools/analysis_tools/get_flops.py -your-config-path- --shape 32
 #### and put the downloaded data file in the same data/cifar10/cifar-10-batches-py directory.
 # also use the corresponding checkpoint path
 # --out defines the output path
-python tools/test.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py \
-/scratch/yw6594/cf/mmcl/out/dl/res18-c10/cifarbase/c32/epoch_200.pth \
---out-item 'pred' --out /scratch/yw6594/cf/mmcl/out/dl/res18-c10/kaggle.pkl --work-dir '/scratch/yw6594/cf/mmcl/out/dl/res18-c10'
+python tools/test.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py \
+/--your-own-dir/out/dl/res18-c10/cifarbase/c32/epoch_200.pth \
+--out-item 'pred' --out /--your-own-dir/out/dl/res18-c10/kaggle.pkl --work-dir '/--your-own-dir/out/dl/res18-c10'

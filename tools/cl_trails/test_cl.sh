@@ -2,13 +2,13 @@ cd  /scratch/yw6594/cf/mmcl
 # export CUDA_VISIBLE_DEVICES=2
 
 ######### test CLdataset
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/cifar_resnet18_cl.py
+# python tools/train.py /--your-own-dir/cifar-img/cifar_resnet18_cl.py
 # for i in {1..2}
 # do
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/mask/cifar100_resnet18_mskmulti.py \
+# python tools/train.py /--your-own-dir/cifar-img/mask/cifar100_resnet18_mskmulti.py \
 # --cfg-options model.head.loss_weight=0. work_dir='/scratch/yw6594/out/cl_test/test_multi/single'
 
-#     python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/mask/cifar100_resnet18_msk.py \
+#     python tools/train.py /--your-own-dir/cifar-img/mask/cifar100_resnet18_msk.py \
 #     --cfg-options model.head.loss_weight=0. work_dir='/scratch/yw6594/out/cl_test/test_setting/single'
 # done
 #######################
@@ -26,79 +26,79 @@ cd  /scratch/yw6594/cf/mmcl
 # model.head.dropout=0.1
 # model.head.act_cfg.negative_slope=0.1
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=3.0 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=1.0 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=0.5 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=0.1 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=0.5 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=0.1 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c40_kd.py \
 # --cfg-options model.head.loss_weight=0.05 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/kd5_start25'  #conv5x5  bn256
 
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.act_cfg.negative_slope=0.1 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/alllrelu'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.act_cfg.negative_slope=0.3 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/alllrelu'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.act_cfg.negative_slope=0.5 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/alllrelu'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.act_cfg.negative_slope=0.6 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/alllrelu'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.act_cfg.negative_slope=0.8 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/alllrelu'
 
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.0 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.1 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.3 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.5 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.7 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+# python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 # --cfg-options model.head.dropout=0.9 work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/allrelu-dropout/lratio0.005'
 
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py \
 --cfg-options work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c40/conv3x3/base/rank32'
 
-python tools/analysis_tools/get_flops.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py --shape 32
+python tools/analysis_tools/get_flops.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32.py --shape 32
 ############ MODEL SIZE LOG
 ##### base -c40 4.384M
 
 #################################################################################### kaggle test code 🛫🛫🛫🛫🛫🛫🛫
-# python tools/analysis_tools/get_flops.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py --shape 32
+# python tools/analysis_tools/get_flops.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py --shape 32
 
-# python tools/test.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py \
-# /scratch/yw6594/cf/mmcl/out/dl/res18-c10/cifarbase/c32/epoch_200.pth \
-# --out-item 'pred' --out /scratch/yw6594/cf/mmcl/out/dl/res18-c10/kaggle.pkl --work-dir '/scratch/yw6594/cf/mmcl/out/dl/res18-c10'
+# python tools/test.py /--your-own-dir/cifar-img/dl_res18_exp/cifar10_resnet18_c32_kaggle.py \
+# /--your-own-dir/out/dl/res18-c10/cifarbase/c32/epoch_200.pth \
+# --out-item 'pred' --out /--your-own-dir/out/dl/res18-c10/kaggle.pkl --work-dir '/--your-own-dir/out/dl/res18-c10'
 
-# python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/draft/cifar10_resnet18.py \
+# python tools/train.py /--your-own-dir/cifar-img/draft/cifar10_resnet18.py \
 # --cfg-options work_dir='/scratch/yw6594/cf/out/dl/res18-c10/cifarbase/c16/lr_mult/b0.99'
-# python tools/analysis_tools/get_flops.py /scratch/yw6594/cf/mmcl/cifar-img/draft/cifar10_resnet18.py --shape 32
+# python tools/analysis_tools/get_flops.py /--your-own-dir/cifar-img/draft/cifar10_resnet18.py --shape 32
 
 ########## we test baseline resnet18 (7x7 conv1 11.182M) for 50 70 200 overall epochs
 # |epoch| acc-1| acc-5|
@@ -198,7 +198,7 @@ python tools/analysis_tools/get_flops.py /scratch/yw6594/cf/mmcl/cifar-img/dl_re
 # |epoch| acc-1| acc-5|
 # |50   | 91.96| 99.78|
 # |70   | 92.83| 99.8 |
-# |200  | 93.76 | 99.8 | /scratch/yw6594/cf/mmcl/out/dl/res18-c10/cifarbase/c32/epoch_200.pth ### so far sota? 🛫🛫🛫🛫🛫🛫🛫🛫
+# |200  | 93.76 | 99.8 | /--your-own-dir/out/dl/res18-c10/cifarbase/c32/epoch_200.pth ### so far sota? 🛫🛫🛫🛫🛫🛫🛫🛫
 
 ########## we test baseline resnet18-cifar (base_c=16 😊0.71M) for 50 70 200 overall epochs
 # |50   | 90.33| 99.73| c16 0.711M [25, 40]

@@ -16,26 +16,26 @@
 # model.head.mid_channels=[64]
 # model.head.mid_channels=[4]
 
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
 --cfg-options model.head.mid_channels=[512] work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/densehead/'
 
 
 ################### fc-hidden dropout
 # model.head.dropout=0.1 
 # and other values
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
 --cfg-options model.head.dropout=0.1 work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/densehead/dropout'
 
 
 ################### fc-hidden leakyrelu relu
 # model.head.act_cfg=dict(type='ReLU')
 # act_cfg=dict(type='LeakyReLU',negative_slope=0.01,inplace=True)
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
 --cfg-options model.head.act_cfg=dict(type='ReLU') work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/densehead/dropout'
 
 ################## normalizaiton
 # model.head.norm_cfg=dict(type='BN1d'),
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_cfg.py \
 --cfg-options model.head.norm_cfg=dict(type='BN1d') work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/densehead/bn'
 
 
@@ -45,7 +45,7 @@ python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/ci
 # model.neck=dict(type='GlobalAveragePooling', output=2)
 ##### this will have 2x2 spatial size before fc layers
 # neck=dict(type='GeneralizedMeanPooling',p_trainable=True,p=1)
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_pool.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-cfg/cifar10_resnet18_c40_pool.py \
 --cfg-options model.neck=dict(type='GlobalAveragePooling',output=2) work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/pool'
 
 

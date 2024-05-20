@@ -21,13 +21,13 @@ cd  /-yourdirectory-/mmcl
 # model.base_channels=16 model.base_channels=128
 
 
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
 --cfg-options param_scheduler.milestones=[25,35] train_cfg.max_epochs=50 work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/c64'
 
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
 --cfg-options param_scheduler.milestones=[35,50] train_cfg.max_epochs=70 work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/c64'
 
-python tools/train.py /scratch/yw6594/cf/mmcl/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
+python tools/train.py /--your-own-dir/cifar-img/dl_res18_exp/base-conv/cifar10_resnet18_original.py \
 --cfg-options param_scheduler.milestones=[100,150] train_cfg.max_epochs=200 work_dir='/-yourdirectory-/out/dl/res18-c10/cifarbase/c64'
 
 

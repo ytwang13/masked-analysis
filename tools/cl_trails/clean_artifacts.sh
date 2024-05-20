@@ -1,3 +1,3 @@
-cd /scratch/yw6594/cf/mmcl/out/artifacts
+cd /--your-own-dir/out/artifacts
 # rm -rf * -i
 rm -rf *
