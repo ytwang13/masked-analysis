@@ -97,6 +97,7 @@ class resLinearClsHead(ClsHead):
         self.inv_mode =inv_mode
         self.cal_rankme = cal_rankme
         self.l2 = l2# later change to sfmx to whether apply softmax better loss
+        self.lp = None
         if mask_loss is not None:
             self.mask_loss = MODELS.build(mask_loss) 
         if self.num_classes <= 0:
@@ -156,6 +157,44 @@ class resLinearClsHead(ClsHead):
                     norm_cfg=None,
                     act_cfg=None))
 
+
+    def _add_lp(self):
+        import copy
+        self.lp = ModuleList()
+        in_channels = self.in_channels
+        if self.mid_channels is None:
+            self.lp.append(
+                LinearBlock(
+                    self.in_channels,
+                    self.num_classes,
+                    dropout_rate=0.,
+                    norm_cfg=None,
+                    act_cfg=None))
+        else:
+            for hidden_channels in self.mid_channels:
+                self.lp.append(
+                    LinearBlock(
+                        in_channels,
+                        hidden_channels,
+                        dropout_rate=self.dropout_rate,
+                        norm_cfg=self.norm_cfg,
+                        act_cfg=self.act_cfg))
+                in_channels = hidden_channels
+
+            self.lp.append(
+                LinearBlock(
+                    self.mid_channels[-1],
+                    self.num_classes,
+                    dropout_rate=0.,
+                    norm_cfg=None,
+                    act_cfg=None))
+        initialize(self.lp, self.init_cfg)
+        self.lp.to(get_device())
+
+    def _del_lp(self):
+        del self.lp
+        self.lp = None
+
     def pre_logits(self, feats: Tuple[torch.Tensor]) -> torch.Tensor:
         """The process before the final classification head.
 
@@ -165,6 +204,17 @@ class resLinearClsHead(ClsHead):
         x = feats[-1]
         for layer in self.layers[:-1]:
             x = layer(x)
+        return x
+
+    def forward_lp(self, feats: Tuple[torch.Tensor]) -> torch.Tensor:
+        """The process before the final classification head.
+
+        The input ``feats`` is a tuple of tensor, and each tensor is the
+        feature of a backbone stage.
+        """
+        x = feats[-1].detach()
+        for lp in self.lp:
+            x = lp(x)
         return x
 
     @property
@@ -222,7 +272,7 @@ class resLinearClsHead(ClsHead):
             mask = torch.gather(mask, dim=1, index=ids_restore)
             x_mask = x*(1-mask) + self.smask_token.expand_as(x) *mask
             x_mask_inv = x*mask + self.smask_token.expand_as(x)*(1-mask)
-        elif mode =='sgf':
+        elif 'sg' in mode:
             # generate the binary mask: 0 is keep, 1 is remove
             mask = torch.ones([N, D], device=x.device)
             mask[:, :len_keep] = 0
@@ -238,7 +288,7 @@ class resLinearClsHead(ClsHead):
             if self.mask_inv:
                 ids_inv = ids_shuffle[:, len_keep:]
                 x_mask_inv = torch.gather(x, dim=1, index=ids_inv)
-                x_mask_inv = torch.cat([self.mask_tokengfinv.expand(size=(x_mask_inv[0],-1)), x_mask_inv], dim=1)
+                x_mask_inv = torch.cat([self.mask_tokengfinv.expand(size=(x_mask_inv.shape[0],-1)), x_mask_inv], dim=1)
                 x_mask_inv = torch.gather(x_mask_inv, dim=1, index=ids_restore)
             else:
                 x_mask_inv = None
@@ -250,7 +300,7 @@ class resLinearClsHead(ClsHead):
             if self.mask_inv:
                 ids_inv = ids_shuffle[:, len_keep:]
                 x_mask_inv = torch.gather(x, dim=1, index=ids_inv)
-                x_mask_inv = torch.cat([self.mask_tokeninv.expand(size=(x_mask_inv[0],-1)), x_mask_inv], dim=1)
+                x_mask_inv = torch.cat([self.mask_tokeninv.expand(size=(x_mask_inv.shape[0],-1)), x_mask_inv], dim=1)
                 x_mask_inv = torch.gather(x_mask_inv, dim=1, index=ids_restore)
             else:
                 x_mask_inv = None
@@ -316,7 +366,7 @@ class resLinearClsHead(ClsHead):
             if self.mask_inv:
                 ids_invs = [ids_shuffle[:, len_keep:] for ids_shuffle in ids_shuffles]
                 x_masks_inv = [torch.gather(x, dim=1, index=ids_inv) for ids_inv in ids_invs]
-                x_masks_inv = [torch.cat([self.mask_tokengfinv.expand(size=(x_mask_inv[0],-1)), x_mask_inv], dim=1) for x_mask_inv in x_masks_inv]
+                x_masks_inv = [torch.cat([self.mask_tokengfinv.expand(size=(x_mask_inv.shape[0],-1)), x_mask_inv], dim=1) for x_mask_inv in x_masks_inv]
                 x_masks_inv = [torch.gather(x_mask_inv, dim=1, index=ids_restore) for (x_mask_inv, ids_restore) in zip(x_masks_inv, ids_restores)]
             else:
                 x_masks_inv = None
@@ -328,7 +378,7 @@ class resLinearClsHead(ClsHead):
             if self.mask_inv:
                 ids_invs = [ids_shuffle[:, len_keep:] for ids_shuffle in ids_shuffles]
                 x_masks_inv = [torch.gather(x, dim=1, index=ids_inv) for ids_inv in ids_invs]
-                x_masks_inv = [torch.cat([self.mask_tokeninv.expand(size=(x_mask_inv[0],-1)), x_mask_inv], dim=1) for x_mask_inv in x_masks_inv]
+                x_masks_inv = [torch.cat([self.mask_tokeninv.expand(size=(x_mask_inv.shape[0],-1)), x_mask_inv], dim=1) for x_mask_inv in x_masks_inv]
                 x_masks_inv = [torch.gather(x_mask_inv, dim=1, index=ids_restore) for (x_mask_inv, ids_restore) in zip(x_masks_inv, ids_restores)]
             else:
                 x_masks_inv = None
@@ -363,11 +413,13 @@ class resLinearClsHead(ClsHead):
             dict[str, Tensor]: a dictionary of loss components
         """
         if cllogits is not None:
-
             if self.mask_mode is not None:
                 losses = self.loss_msk(cllogits, feats, data_samples)
-                return losses
-            losses = self.loss_kd(cllogits, feats, data_samples, **kwargs)
+            else:
+                losses = self.loss_kd(cllogits, feats, data_samples, **kwargs)
+            if self.lp is not None:
+                lp_score = self.forward_lp(feats)
+                losses['loss_lp'] = self._get_lploss(lp_score, data_samples, **kwargs)
             return losses
         # The part can be traced by torch.fx
         cls_score = self(feats)
@@ -376,8 +428,12 @@ class resLinearClsHead(ClsHead):
         if self.cal_rankme:
             # losses.update(rankme=calc_rankme(feats[-1]))
             losses['rank'] = calc_rankme(feats[-1])
+        if self.lp is not None:
+            losses['loss_ce'] = losses['loss']
+            del losses['loss']
+            lp_score = self.forward_lp(feats)
+            losses['loss_lp'] = self._get_lploss(lp_score, data_samples, **kwargs)
         return losses
-        # def loss
     
     def loss_kd(self, 
              cllogits: Tuple[torch.Tensor],
@@ -404,6 +460,8 @@ class resLinearClsHead(ClsHead):
         if self.kd_mode =='kd':
             losses = self._get_loss(cls_score, data_samples, **kwargs)
             losses['loss_ce'] = losses['loss']
+            if isinstance(cllogits, Tuple):
+                cllogits = cllogits[-1](feats) # maybe here should add mode?
             losses['loss_kd'] = self.kd_loss(cls_score, cllogits) * self.loss_weight
             del losses['loss']
         elif self.kd_mode =='ens':
@@ -449,6 +507,50 @@ class resLinearClsHead(ClsHead):
 
         return losses
 
+    def _get_lploss(self, cls_score: torch.Tensor,
+                  data_samples, **kwargs):
+        """Unpack data samples and compute loss."""
+        # Unpack data samples and pack targets
+        try:
+            if 'gt_score' in data_samples[0]:
+                # Batch augmentation may convert labels to one-hot format scores.
+                target = torch.stack([i.gt_score for i in data_samples])
+            else:
+                target = torch.cat([i.gt_label for i in data_samples])
+        except:
+            target = data_samples
+        # compute loss
+        loss = self.loss_module(
+            cls_score, target, avg_factor=cls_score.size(0), **kwargs)
+        return loss
+
+
+    def predict_lp(
+        self,
+        feats: Tuple[torch.Tensor],
+        data_samples: Optional[List[Optional[DataSample]]] = None
+    ) -> List[DataSample]:
+        """Inference without augmentation.
+
+        Args:
+            feats (tuple[Tensor]): The features extracted from the backbone.
+                Multiple stage inputs are acceptable but only the last stage
+                will be used to classify. The shape of every item should be
+                ``(num_samples, num_classes)``.
+            data_samples (List[DataSample | None], optional): The annotation
+                data of every samples. If not None, set ``pred_label`` of
+                the input data samples. Defaults to None.
+
+        Returns:
+            List[DataSample]: A list of data samples which contains the
+            predicted results.
+        """
+        # The part can be traced by torch.fx
+        cls_score = self.forward_lp(feats)
+
+        # The part can not be traced by torch.fx
+        predictions = self._get_predictions(cls_score, data_samples)
+        return predictions
 
     def loss_forward(self, 
              cllogits: Tuple[torch.Tensor],

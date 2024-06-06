@@ -144,11 +144,49 @@ Here we can clearly see in the plot
 
 ***Note: Since HPC require storage limitations, so I'm annoyed by wandb's artifacts, I accidentally rm -rf * of some of the logs of wandb results while deleting the wandb cache.***
 
+
+### Comparision on Cifar10.1 evaluation
+- kd/msk method do have a smaller performance gap, is this a trade off or can be alleviated by LP(good representation learnt) or some other method need to be proposed
+- 
+
+### Comparision on Linear Probing results
+- is good representation kind of reflected by RankMe?
+- is LP properly implemented?
+- what experiements to follow?
+
+
+**Rank Log:**
+- **KD-EMA LP and CIFAR10.1 Results Step25 Overview** [Most EMA ratio and loss weight]:
+  - LP:
+    1. The LP results and original classifier predictions are totally the same for the CIFAR10.1 dataset.
+    2. However, the LP results on the CIFAR10 test set are sometimes slightly better than the original dataset.
+  - Rank:
+    3. Based on rank, as stated before, the loss weight on the auxiliary loss plays the main part. (Distillation loss helps improve rank)
+    4. Higher rank (>=59) tends to exhibit higher accuracy/top1 but not quite as high as ensemble distill results.
+<img src="demo/kdemalp-1.png" alt="Wandb results kdema-1">
+
+- **KD-EMA LP and CIFAR10.1 Results Step1 Overview**
+  - With all the above LP results, what is different is that LP results of this step 1 started version downgrade slightly less on CIFAR10.1 vs CIFAR10. (Step1: 90->82.55 to Step25: 91->81)
+  - Rank also exhibits a similar result. This time the bottom line is higher and the rise of rank starts almost in line with the start step of the method.
+
+- **KD-Base LP and CIFAR10.1 Results Overview** [Most EMA ratio and loss weight]:
+  - LP:
+    1. The KD base part of the LP results vs original classifier head predictions, they are all the same.
+    2. The margin between CIFAR original test dataset vs CIFAR10.1 is higher compared to that of the KD-EMA mode.
+    3. The highest rank value is almost the lowest rank value of KD-EMA mode.
+    4. Test higher LP learning rate multiplier still pending.
+<img src="demo/kdbase-lp-1.png" alt="Wandb results kdema-1">
+
+
 ### TODO
-- Test masked results performance on CIFAR-10.1 dataset.
-- Test longer epochs of key hyperparameter selections.
-- Finish EMA masked model results.
-- Finish masked experiments on continual learning setting.
+- Test masked results performance on CIFAR-10.1 dataset. ✅ ✅
+- Finish EMA masked model results. ✅ ❓
+    - ema on backbone
+    - ema based on lp mult best
+    - mskall baseline based on kdema best configure
+    - try difussion thing
+- Test longer epochs of key hyperparameter selections. ❓ ❓
+- Finish masked experiments on continual learning setting. ❓ ❓
 <!-- ### Baseline- architecture modification
 Follow the scripts in run_baseline.sh
 
@@ -173,3 +211,6 @@ Follow the scripts in run_cfgs.sh
 ```shell
  sh tools/res_trails/run_evaluation.sh
 ``` -->
+
+
+

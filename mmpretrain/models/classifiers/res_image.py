@@ -62,7 +62,7 @@ class resImageClassifier(BaseClassifier):
             self.cls_only = train_cfg.pop('cls_only', False)
             self.is_ema = train_cfg.pop('is_ema',False)
             if self.is_ema:
-                self.ema_mode = train_cfg.pop('ema_mode','mom')
+                self.ema_mode = train_cfg.pop('ema_mode','ema')
         data_preprocessor = data_preprocessor or {}
 
         if isinstance(data_preprocessor, dict):
@@ -325,3 +325,83 @@ class resImageClassifier(BaseClassifier):
                 'support `get_layer_depth` by now.')
 
 
+    def train_step(self, data: Union[dict, tuple, list],
+                   optim_wrapper: OptimWrapper,
+                   mode: Optional[str]='ce') -> Dict[str, torch.Tensor]:
+        """Implements the default model training process including
+        preprocessing, model forward propagation, loss calculation,
+        optimization, and back-propagation.
+
+        During non-distributed training. If subclasses do not override the
+        :meth:`train_step`, :class:`EpochBasedTrainLoop` or
+        :class:`IterBasedTrainLoop` will call this method to update model
+        parameters. The default parameter update process is as follows:
+
+        1. Calls ``self.data_processor(data, training=False)`` to collect
+           batch_inputs and corresponding data_samples(labels).
+        2. Calls ``self(batch_inputs, data_samples, mode='loss')`` to get raw
+           loss
+        3. Calls ``self.parse_losses`` to get ``parsed_losses`` tensor used to
+           backward and dict of loss tensor used to log messages.
+        4. Calls ``optim_wrapper.update_params(loss)`` to update model.
+
+        Args:
+            data (dict or tuple or list): Data sampled from dataset.
+            optim_wrapper (OptimWrapper): OptimWrapper instance
+                used to update model parameters.
+
+        Returns:
+            Dict[str, torch.Tensor]: A ``dict`` of tensor for logging.
+        """
+        data = self.data_preprocessor(data, True)
+        # Enable automatic mixed precision training context.
+        with optim_wrapper.optim_context(self):
+            losses = self._run_forward(data, mode='loss')  # type: ignore         
+            parsed_losses, log_vars = self.parse_losses(losses)  # type: ignore
+            optim_wrapper.update_params(parsed_losses)
+
+        return log_vars
+
+    def val_step(self, data: Union[tuple, dict, list]) -> list:
+        """Gets the predictions of given data.
+
+        Calls ``self.data_preprocessor(data, False)`` and
+        ``self(inputs, data_sample, mode='predict')`` in order. Return the
+        predictions which will be passed to evaluator.
+
+        Args:
+            data (dict or tuple or list): Data sampled from dataset.
+
+        Returns:
+            list: The predictions of given data.
+        """
+        data = self.data_preprocessor(data, False)
+        return self._run_forward(data, mode='predict')  # type: ignore
+
+    def lp_step(self, data: Union[tuple, dict, list]) -> list:
+        data = self.data_preprocessor(data, False)
+        inputs, data_samples = data['inputs'], data['data_samples']
+        feats = self.extract_feat(inputs)
+        return self.head.predict_lp(feats, data_samples)
+        
+
+
+    def _run_forward(self, data: Union[dict, tuple, list],
+                     mode: str) -> Union[Dict[str, torch.Tensor], list]:
+        """Unpacks data for :meth:`forward`
+
+        Args:
+            data (dict or tuple or list): Data sampled from dataset.
+            mode (str): Mode of forward.
+
+        Returns:
+            dict or list: Results of training or testing mode.
+        """
+        if isinstance(data, dict):
+            results = self(**data, mode=mode)
+        elif isinstance(data, (list, tuple)):
+            results = self(*data, mode=mode)
+        else:
+            raise TypeError('Output of `data_preprocessor` should be '
+                            f'list, tuple or dict, but got {type(data)}')
+        return results
